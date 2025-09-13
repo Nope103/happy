@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Chúc mừng sinh nhật</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .login-box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      text-align: center;
+      z-index: 2;
+    }
+    .avatar {
+      width: 100px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+    h2 {
+      margin-bottom: 15px;
+    }
+    input {
+      width: 180px;
+      padding: 8px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-size: 18px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      gap: 10px;
+      justify-content: center;
+    }
+    .keypad button {
+      padding: 15px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background: #eee;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .keypad button:hover {
+      background: #ddd;
+    }
+    canvas {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    .message {
+      position: fixed;
+      top: 25%;
+      width: 100%;
+      text-align: center;
+      font-size: 45px;
+      font-weight: bold;
+      color: white;
+      display: none;
+      z-index: 1;
+      text-shadow: 2px 2px 5px #ff69b4;
+    }
+    .photo {
+      position: fixed;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 250px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(255,255,255,0.5);
+      display: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <!-- Nhập mật khẩu -->
+  <div class="login-box" id="loginBox">
+    <img src="https://i.ibb.co/7R8m9Vz/avatar.png" class="avatar">
+    <h2>NHẬP PASS ĐI NGƯỜI ĐẸP</h2>
+    <input type="password" id="password" readonly>
+    <div class="keypad">
+      <button onclick="pressNum(1)">1</button>
+      <button onclick="pressNum(2)">2</button>
+      <button onclick="pressNum(3)">3</button>
+      <button onclick="pressNum(4)">4</button>
+      <button onclick="pressNum(5)">5</button>
+      <button onclick="pressNum(6)">6</button>
+      <button onclick="pressNum(7)">7</button>
+      <button onclick="pressNum(8)">8</button>
+      <button onclick="pressNum(9)">9</button>
+      <button onclick="checkPass()">✔</button>
+      <button onclick="pressNum(0)">0</button>
+      <button onclick="clearPass()">✖</button>
+    </div>
+  </div>
+
+  <!-- Hiệu ứng + chúc mừng -->
+  <canvas id="canvas"></canvas>
+  <div class="message" id="message">🎉 Chúc mừng sinh nhật bạn yêu 💖 🎂</div>
+  <img src="https://i.ibb.co/m6G5Rvw/happy-birthday.jpg" id="photo" class="photo">
+
+  <!-- Nhạc nền (auto play sau khi nhập pass đúng) -->
+  <audio id="music" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+
+  <script>
+    // Xử lý nhập mật khẩu
+    let pass = "";
+    function pressNum(num) {
+      pass += num;
+      document.getElementById("password").value = pass;
+    }
+    function clearPass() {
+      pass = "";
+      document.getElementById("password").value = "";
+    }
+    function checkPass() {
+      if(pass === "150911"){
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("canvas").style.display = "block";
+        document.getElementById("message").style.display = "block";
+        document.getElementById("photo").style.display = "block";
+        document.getElementById("music").play();
+        startBirthday();
+      } else {
+        alert("Sai mật khẩu rồi 😜");
+        clearPass();
+      }
+    }
+
+    // Hiệu ứng birthday matrix
+    function startBirthday(){
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth;
+
+      const letters = "HAPPYBIRTHDAYCHUCMUNGSINHNHATBANYEU".split("");
+      const fontSize = 16;
+      const columns = canvas.width / fontSize;
+      const drops = [];
+      for (let i = 0; i < columns; i++) drops[i] = 1;
+
+      function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#0F0";
+        ctx.font = fontSize + "px monospace";
+
+        for (let i = 0; i < drops.length; i++) {
+          const text = letters[Math.floor(Math.random() * letters.length)];
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+          drops[i]++;
+        }
+      }
+      setInterval(draw, 33);
+    }
+  </script>
+</body>
+</html>
